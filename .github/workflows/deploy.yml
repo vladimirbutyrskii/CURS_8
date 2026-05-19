@@ -2,7 +2,7 @@ name: CI/CD - Test, Build & Deploy
 
 on:
   push:
-    branches: [main, master]
+    branches: [feature/curs_8]
   pull_request:
     branches: [main, master]
 
