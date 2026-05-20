@@ -129,7 +129,7 @@ class TestPublicHabits:
         response = another_auth_client.get('/api/habits/public/')
         assert response.status_code == 200
         # public_habit принадлежит another_user, поэтому его не будет в выдаче для него
-        results_ids = [h['id'] for h in response.data['results']]
+        results_ids = [h['id'] for h in response.data]
         assert public_habit.id not in results_ids
 
     def test_cannot_modify_public_habit(self, auth_client, public_habit):

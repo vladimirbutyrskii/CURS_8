@@ -1,4 +1,5 @@
 from rest_framework import viewsets, generics, status
+# from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from .models import Habit, TelegramUser
 
@@ -62,7 +63,7 @@ class PublicHabitListView(generics.ListAPIView):
 
     serializer_class = HabitSerializer
     # permission_classes = [IsAuthenticated]
-    # pagination_class = HabitPagination
+    # pagination_class = PageNumberPagination
 
     def get_queryset(self):
         """Только публичные привычки, исключая привычки текущего пользователя."""
