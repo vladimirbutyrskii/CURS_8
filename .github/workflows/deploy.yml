@@ -96,51 +96,37 @@ jobs:
   # ============ ДЕПЛОЙ НА СЕРВЕР ============
   deploy:
     needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/feature/curs_8'
+    runs-on: self-hosted       # ← вместо ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup SSH and deploy
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            set -e
-            cd /opt/curs5
-
-            # Копируем docker-compose.yml и конфиги через git pull
-            git pull origin main
-
-            # Создаем .env из GitHub Secrets
-            echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
-            echo "DEBUG=False" >> .env
-            echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> .env
-            echo "DB_HOST=db" >> .env
-            echo "DB_PORT=5432" >> .env
-            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-            echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-            echo "REDIS_HOST=redis" >> .env
-            echo "REDIS_PORT=6379" >> .env
-            echo "CELERY_BROKER_URL=redis://redis:6379/0" >> .env
-            echo "CELERY_RESULT_BACKEND=redis://redis:6379/0" >> .env
-            echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
-            echo "CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }}" >> .env
-            echo "NGINX_PORT=80" >> .env
-
-            # Пересобираем и запускаем контейнеры
-            docker compose -f docker-compose.yml down
-            docker compose -f docker-compose.yml up -d --build
-
-            # Применяем миграции (на всякий случай)
-            docker compose -f docker-compose.yml exec -T web python manage.py migrate --noinput
-
-            # Собираем статику
-            docker compose -f docker-compose.yml exec -T web python manage.py collectstatic --noinput
-
-            # Очистка старых образов
-            docker system prune -f
+      - name: Deploy on server
+        run: |
+          set -e
+          cd /opt/curs8
+          
+          git pull origin main
+          
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
+          echo "DEBUG=False" >> .env
+          echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> .env
+          echo "DB_HOST=db" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "REDIS_HOST=redis" >> .env
+          echo "REDIS_PORT=6379" >> .env
+          echo "CELERY_BROKER_URL=redis://redis:6379/0" >> .env
+          echo "CELERY_RESULT_BACKEND=redis://redis:6379/0" >> .env
+          echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
+          echo "CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }}" >> .env
+          echo "NGINX_PORT=80" >> .env
+          
+          docker compose -f docker-compose.yml down
+          docker compose -f docker-compose.yml up -d --build
+          docker compose -f docker-compose.yml exec -T web python manage.py migrate --noinput
+          docker compose -f docker-compose.yml exec -T web python manage.py collectstatic --noinput
+          docker system prune -f
