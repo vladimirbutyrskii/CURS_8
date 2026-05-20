@@ -107,7 +107,7 @@ jobs:
           set -e
           cd /opt/curs8
           
-          git pull origin main
+          git pull
           
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
           echo "DEBUG=False" >> .env
