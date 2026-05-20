@@ -213,4 +213,3 @@ class TestTelegramLink:
         """Привязка Telegram требует авторизации."""
         response = api_client.post('/api/telegram/link/', {'chat_id': '123'})
         assert response.status_code == 401
-

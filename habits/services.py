@@ -44,4 +44,3 @@ def build_reminder_message(habit):
         message += f'\n🎁 <b>Приятная привычка:</b> {habit.linked_habit.action}'
 
     return message
-

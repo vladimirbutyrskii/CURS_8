@@ -8,4 +8,3 @@ app = Celery('config')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_scheduler = 'django_celery_beat.schedulers:DatabaseScheduler'
 app.autodiscover_tasks()
-

@@ -10,4 +10,3 @@ urlpatterns = [
     path('telegram/link/', TelegramLinkView.as_view(), name='telegram-link'),
     path('', include(router.urls)),
 ]
-
