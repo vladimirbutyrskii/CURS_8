@@ -119,10 +119,11 @@ class TestHabitCRUD:
 class TestPublicHabits:
 
     def test_list_public_habits(self, auth_client, public_habit):
-        """Список публичных привычек."""
+        """Получение списка публичных привычек."""
         response = auth_client.get('/api/habits/public/')
         assert response.status_code == 200
-        assert 'results' in response.data
+        habits = response.data
+        assert any(h['is_public'] for h in habits)
 
     def test_public_habits_exclude_own(self, another_auth_client, public_habit):
         """Публичные привычки не включают свои."""
