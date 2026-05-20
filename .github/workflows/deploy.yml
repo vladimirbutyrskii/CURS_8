@@ -110,6 +110,7 @@ jobs:
           git pull
           
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
           echo "DEBUG=False" >> .env
           echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> .env
           echo "DB_HOST=db" >> .env
