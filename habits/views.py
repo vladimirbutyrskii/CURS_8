@@ -60,7 +60,7 @@ class PublicHabitListView(generics.ListAPIView):
     Пагинация по 5.
     """
 
-    # serializer_class = HabitSerializer
+    serializer_class = HabitSerializer
     # permission_classes = [IsAuthenticated]
     # pagination_class = HabitPagination
 
@@ -77,7 +77,7 @@ class TelegramLinkView(generics.CreateAPIView):
     """
 
     serializer_class = TelegramUserSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         request_body=openapi.Schema(
