@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.core.exceptions import ValidationError
+
 from .validators import validate_duration, validate_periodicity, validate_habit
 
 

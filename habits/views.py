@@ -1,7 +1,8 @@
 from rest_framework import viewsets, generics, status
+# from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from .models import Habit, TelegramUser
-from .serializers import HabitSerializer, HabitCreateSerializer, HabitUpdateSerializer
+
 from .permissions import IsOwner
 from .pagination import HabitPagination
 
@@ -9,7 +10,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+
 from .serializers import (
     HabitSerializer,
     HabitCreateSerializer,
@@ -61,8 +62,8 @@ class PublicHabitListView(generics.ListAPIView):
     """
 
     serializer_class = HabitSerializer
-    permission_classes = [IsAuthenticated]
-    pagination_class = HabitPagination
+    # permission_classes = [IsAuthenticated]
+    # pagination_class = PageNumberPagination
 
     def get_queryset(self):
         """Только публичные привычки, исключая привычки текущего пользователя."""

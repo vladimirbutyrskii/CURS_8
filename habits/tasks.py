@@ -1,6 +1,6 @@
 from celery import shared_task
 from django.utils import timezone
-from datetime import timedelta
+
 from .models import Habit, TelegramUser
 from .services import send_telegram_message, build_reminder_message
 

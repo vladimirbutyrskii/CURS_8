@@ -1,4 +1,175 @@
-КУРСОВАЯ РАБОТА №5
+### КУРС 8. ИТОГОВОЕ ЗАДАНИЕ.
+
+### Продолжение CURS_5 
+
+### Описание
+
+Сервис для отслеживания привычек с интеграцией Telegram для напоминаний.
+Построен на Django REST Framework, Celery, PostgreSQL и Redis.
+
+### Стек технологий
+
+- **Backend**: Django 5.1, Django REST Framework
+- **База данных**: PostgreSQL
+- **Брокер сообщений**: Redis
+- **Фоновые задачи**: Celery (worker + beat)
+- **Уведомления**: Telegram Bot API
+- **Контейнеризация**: Docker, Docker Compose
+- **Веб-сервер**: Nginx (проксирование)
+- **CI/CD**: GitHub Actions
+
+---
+
+### Локальный запуск
+
+### Предварительные требования
+
+- Docker и Docker Compose
+- Telegram Bot Token (получить у [@BotFather](https://t.me/BotFather))
+
+### 1. Клонирование репозитория
+
+\`\`\`bash
+git clone https://github.com/vladimirbutyrskii/CURS_5.git
+cd CURS_5
+\`\`\`
+
+### 2. Настройка переменных окружения
+
+\`\`\`bash
+cp .env.example .env
+\`\`\`
+
+Отредактируйте `.env`, заполнив обязательные поля:
+- `SECRET_KEY` — секретный ключ Django
+- `TELEGRAM_BOT_TOKEN` — токен вашего бота
+- Пароли для БД
+
+### 3. Запуск одной командой
+
+\`\`\`bash
+docker compose up -d
+\`\`\`
+
+Сервис будет доступен по адресу: **http://localhost**
+
+### 4. Создание суперпользователя
+
+\`\`\`bash
+docker compose exec web python manage.py csu
+\`\`\`
+
+### 5. Остановка
+
+\`\`\`bash
+docker compose down
+\`\`\`
+
+---
+
+### Структура сервисов
+
+| Сервис | Порт | Описание |
+|--------|------|----------|
+| `nginx` | 80 | Проксирование запросов, раздача статики |
+| `web` | 8000 (внутренний) | Django + Gunicorn |
+| `db` | 5432 (внутренний) | PostgreSQL |
+| `redis` | 6379 (внутренний) | Брокер сообщений |
+| `celery_worker` | — | Обработка фоновых задач |
+| `celery_beat` | — | Периодические задачи |
+
+---
+
+### Настройка CI/CD и деплоя
+
+### 1. Подготовка удаленного сервера
+
+Установите на сервер (Ubuntu 22.04+):
+
+\`\`\`bash
+## Обновление системы
+sudo apt update && sudo apt upgrade -y
+
+## Установка Docker
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+
+## Установка Docker Compose
+sudo apt install docker-compose-plugin -y
+
+## Выход и повторный вход для применения группы docker
+exit
+\`\`\`
+
+### 2. Клонирование проекта на сервер
+
+\`\`\`bash
+sudo mkdir -p /opt/curs5
+sudo chown $USER:$USER /opt/curs5
+git clone https://github.com/vladimirbutyrskii/CURS_5.git /opt/curs5
+cd /opt/curs5
+\`\`\`
+
+### 3. Настройка SSH-ключа для деплоя
+
+На сервере:
+\`\`\`bash
+ssh-keygen -t ed25519 -C "github-actions-deploy" -f ~/.ssh/github_actions
+cat ~/.ssh/github_actions.pub >> ~/.ssh/authorized_keys
+cat ~/.ssh/github_actions   # Скопируйте содержимое
+\`\`\`
+
+### 4. Настройка GitHub Secrets
+
+В репозитории GitHub: **Settings → Secrets and variables → Actions → New repository secret**
+
+Добавьте следующие секреты:
+
+| Secret | Описание |
+|--------|----------|
+| `SSH_HOST` | IP-адрес вашего сервера |
+| `SSH_USER` | Имя пользователя на сервере |
+| `SSH_PRIVATE_KEY` | **Приватный ключ** (содержимое `~/.ssh/github_actions`) |
+| `SECRET_KEY` | Секретный ключ Django |
+| `DB_NAME` | Имя базы данных |
+| `DB_USER` | Пользователь БД |
+| `DB_PASSWORD` | Пароль БД |
+| `TELEGRAM_BOT_TOKEN` | Токен Telegram бота |
+| `ALLOWED_HOSTS` | Домены через запятую |
+| `CORS_ALLOWED_ORIGINS` | Разрешенные CORS-источники |
+
+### 5. Как работает деплой
+
+1. Пуш в ветку `main` или `master`
+2. GitHub Actions:
+   - Запускает **линтинг** (flake8)
+   - Запускает **тесты** (pytest)
+   - При успехе — **собирает Docker-образы**
+   - По SSH подключается к серверу
+   - Создает `.env` из секретов
+   - Перезапускает контейнеры
+
+---
+
+### Полезные команды
+
+\`\`\`bash
+### Логи сервисов
+docker compose logs -f web
+docker compose logs -f celery_worker
+
+### Перезапуск конкретного сервиса
+docker compose restart celery_worker
+
+### Выполнение команд в контейнере
+docker compose exec web python manage.py shell_plus
+
+### Проверка статуса
+docker compose ps
+\`\`\`
+
+
+### КУРСОВАЯ РАБОТА №5
 
 Реализованы следующие Задачи:
 1. Добавлены необходимые модели привычек.

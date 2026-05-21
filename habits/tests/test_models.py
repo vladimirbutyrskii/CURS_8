@@ -113,4 +113,3 @@ class TestTelegramUserModel:
         TelegramUser.objects.create(user=user1, chat_id='123456789')
         with pytest.raises(Exception):
             TelegramUser.objects.create(user=user2, chat_id='123456789')
-

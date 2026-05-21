@@ -119,17 +119,18 @@ class TestHabitCRUD:
 class TestPublicHabits:
 
     def test_list_public_habits(self, auth_client, public_habit):
-        """Список публичных привычек."""
+        """Получение списка публичных привычек."""
         response = auth_client.get('/api/habits/public/')
         assert response.status_code == 200
-        assert 'results' in response.data
+        habits = response.data
+        assert any(h['is_public'] for h in habits)
 
     def test_public_habits_exclude_own(self, another_auth_client, public_habit):
         """Публичные привычки не включают свои."""
         response = another_auth_client.get('/api/habits/public/')
         assert response.status_code == 200
         # public_habit принадлежит another_user, поэтому его не будет в выдаче для него
-        results_ids = [h['id'] for h in response.data['results']]
+        results_ids = [h['id'] for h in response.data]
         assert public_habit.id not in results_ids
 
     def test_cannot_modify_public_habit(self, auth_client, public_habit):
@@ -213,4 +214,3 @@ class TestTelegramLink:
         """Привязка Telegram требует авторизации."""
         response = api_client.post('/api/telegram/link/', {'chat_id': '123'})
         assert response.status_code == 401
-
